@@ -177,6 +177,8 @@ cxxplot_WARNOFF
       set_legend_columns( cols );
     } };
 
+     void remove_legend_items(int);
+
     const std::vector< class figure >& figures( ) const;
     std::vector< class figure >&       figures( );
 

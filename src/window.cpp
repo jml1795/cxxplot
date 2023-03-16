@@ -286,6 +286,14 @@ void window_proxy::set_legend_columns(const int &cols)
   } );
 }
 
+void window_proxy::remove_legend_items(int cnt) {
+  valid_or_throw( );
+
+  invoke_blocking( [ this, cnt ]( ) {
+     plot_widget_->legend->removeItem(plot_widget_->legend->itemCount() - cnt);
+  } );
+}
+
 const std::vector< class figure >& window_proxy::figures( ) const
 {
   valid_or_throw( );
