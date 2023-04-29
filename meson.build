@@ -69,6 +69,12 @@ cxxplot = library(
   dependencies: dependencies,
   install: true)
 
+cxxplot_dep = declare_dependency(
+  link_with: cxxplot,
+  include_directories: include_directories('include'),
+  dependencies: dependencies
+)
+
 # Installation
 install_headers(cxxplot_headers, subdir: cxxplot_dir_with_version + '/cxxplot')
 
