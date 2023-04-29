@@ -1,4 +1,8 @@
-project('cxxplot', 'cpp', version: '0.3.1', default_options: ['cpp_std=c++20'])
+project(
+  'cxxplot', 'cpp',
+  version: '0.3.2',
+  default_options: ['cpp_std=c++20']
+)
 
 cxxplot_not_subproject = meson.is_subproject()
 
@@ -16,8 +20,10 @@ else
 endif
 
 qt_dep = dependency('qt6', modules: qt_modules, required: false)
+qt = import('qt6', required: false)
 if not qt_dep.found()
   qt_dep = dependency('qt5', modules: qt_modules)
+  qt = import('qt5')
 endif
 
 dependencies = [qt_dep, dependency('threads')]
@@ -40,6 +46,18 @@ cxxplot_sources = files(
   'src/version.cpp'
 )
 
+cxxplot_qrcs = files(
+  'src/images.qrc'
+)
+
+cxxplot_moc_headers = files(
+  'src/execution_p.hpp',
+  'src/qcustomplot.h',
+  'src/widget.hpp',
+  'include/cxxplot/graph.hpp',
+  'include/cxxplot/window.hpp'
+)
+
 cxxplot_headers = files(
   'src/execution_p.hpp',
   'src/qcustomplot.h',
@@ -48,7 +66,7 @@ cxxplot_headers = files(
   'include/cxxplot/align.hpp',
   'include/cxxplot/color.hpp',
   'include/cxxplot/concepts.hpp',
-  'include/cxxplot/cxxplot',
+  'include/cxxplot/cxxplot.hpp',
   'include/cxxplot/execution.hpp',
   'include/cxxplot/figure.hpp',
   'include/cxxplot/image.hpp',
@@ -63,11 +81,24 @@ cxxplot_headers = files(
   'include/cxxplot/window.hpp'
 )
 
+cxxplot_moc_sources = qt.compile_moc(
+  headers : cxxplot_moc_headers,
+  include_directories: include_directories('include', 'src'),
+  dependencies: qt_dep
+)
+
+cxxplot_resources = qt.compile_resources(
+  sources : cxxplot_qrcs
+)
+
 cxxplot = library(
   'cxxplot',
-  sources: [cxxplot_sources, cxxplot_headers],
+  sources: [cxxplot_sources, cxxplot_headers, cxxplot_moc_sources, cxxplot_resources],
+  include_directories: include_directories('include', 'src'),
   dependencies: dependencies,
-  install: true)
+  install: true,
+  cpp_args : ['-DCXXPLOT_VERSION="@0@"'.format(meson.project_version())]
+)
 
 cxxplot_dep = declare_dependency(
   link_with: cxxplot,
