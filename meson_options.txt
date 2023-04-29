@@ -1,0 +1,2 @@
+option('opengl', type: 'boolean', value: true, description: 'Compile with OpenGL support')
+option('def_library', type: 'combo', choices: ['shared', 'static'], value: 'shared', description: 'Type of library to build')
