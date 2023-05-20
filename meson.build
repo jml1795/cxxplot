@@ -19,11 +19,11 @@ else
   qt_modules = ['Core', 'Widgets', 'Gui', 'PrintSupport']
 endif
 
-qt_dep = dependency('qt6', modules: qt_modules, required: false)
 qt = import('qt6', required: false)
+qt_dep = dependency('qt6', modules: qt_modules, required: false)
 if not qt_dep.found()
-  qt_dep = dependency('qt5', modules: qt_modules)
   qt = import('qt5')
+  qt_dep = dependency('qt5', modules: qt_modules)
 endif
 
 dependencies = [qt_dep, dependency('threads')]
@@ -102,13 +102,14 @@ cxxplot = library(
 
 cxxplot_dep = declare_dependency(
   link_with: cxxplot,
-  include_directories: include_directories('include'),
+  include_directories: include_directories('include', is_system: get_option('is_system')),
   dependencies: dependencies
 )
 
 # Installation
 install_headers(cxxplot_headers, subdir: cxxplot_dir_with_version + '/cxxplot')
 
+message('Is system: @0@'.format(get_option('is_system')))
 # tests/examples
 # if not cxxplot_not_subproject
 #   subdir('tests')
